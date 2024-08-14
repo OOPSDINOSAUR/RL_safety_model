@@ -6,13 +6,14 @@ import warnings
 import csv
 import math
 import pickle
+import os
 from tqdm import tqdm
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import pdist, squareform
 import datetime
 
 # Extract all tables of mysql database
-
+dir_path = os.path.dirname(os.path.realpath(__file__))
 mydb = mysql.connector.connect(
   host="localhost",
   user="",
@@ -30,4 +31,4 @@ for i in TABLES:
     result = mycursor.fetchall()
     columns = [i[0] for i in mycursor.description]
     df = pd.DataFrame(result, columns=columns)
-    df.to_csv('/RL_safety_models/data_sepsis/' + i + '.csv', index=False)
+    df.to_csv(f'{dir_path}/data_sepsis/' + i + '.csv', index=False)

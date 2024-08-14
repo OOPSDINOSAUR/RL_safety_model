@@ -6,25 +6,27 @@ import warnings
 import csv
 import math
 import pickle
+import os
 from tqdm import tqdm
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import pdist, squareform
 import datetime
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 print('Load vasoMV')
-vasoMV = pd.read_csv('/RL_safety_models/data_sofa/VASO_MV.csv')
+vasoMV = pd.read_csv(f'{dir_path}/data_sofa/VASO_MV.csv')
 
 print('Load vasoCV')
-vasoCV = pd.read_csv('/RL_safety_models/data_sofa/VASO_CV.csv')
+vasoCV = pd.read_csv(f'{dir_path}/data_sofa/VASO_CV.csv')
 
 print('Load UO')
-UO = pd.read_csv('/RL_safety_models/data_sofa/UO.csv')
+UO = pd.read_csv(f'{dir_path}/data_sofa/UO.csv')
 
 print('Load UOpreadm')
-UOpreadm = pd.read_csv('/RL_safety_models/data_sofa/PREADM_UO.csv')
+UOpreadm = pd.read_csv(f'{dir_path}/data_sofa/PREADM_UO.csv')
 
 print('Load reformatsah')
-reformat = pd.read_csv('/RL_safety_models/data_sofa/reformat.csv').values
+reformat = pd.read_csv(f'{dir_path}/data_sofa/reformat.csv').values
 
 
 dfs = [vasoCV, UO, UOpreadm]
@@ -168,4 +170,4 @@ for i in range(npt):
 
 reformatsah = pd.DataFrame(reformat, columns=['timestep','icustayid', 'charttime', 'Total_bili', 'MeanBP', 'Creatinine','GCS', 'PaO2', 'FiO2', 'Platelet','PaO2_FiO2','median_dose_vaso', 'max_dose_vaso','output_4hourly'])
 
-reformatsah.to_csv('/RL_safety_models/data_sofa/reformat_vaso.csv', index=False, na_rep='NaN')
+reformatsah.to_csv(f'{dir_path}/data_sofa/reformat_vaso.csv', index=False, na_rep='NaN')
