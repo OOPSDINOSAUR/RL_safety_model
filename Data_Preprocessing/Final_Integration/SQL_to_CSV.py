@@ -30,4 +30,4 @@ for i in TABLES:
     result = mycursor.fetchall()
     columns = [i[0] for i in mycursor.description]
     df = pd.DataFrame(result, columns=columns)
-    df.to_csv('/RL-safety-models/data_sepsis/' + i + '.csv', index=False)
+    df.to_csv('/RL_safety_models/data_sepsis/' + i + '.csv', index=False)

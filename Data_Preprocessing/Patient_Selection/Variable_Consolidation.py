@@ -12,25 +12,25 @@ from scipy.spatial.distance import pdist, squareform
 import datetime
 
 print('Load Total_bili')
-Total_bili = pd.read_csv('/RL-safety-models/data_sofa/BILIRUBIN.csv').values[:, [0, 2, 3]]
+Total_bili = pd.read_csv('/RL_safety_models/data_sofa/BILIRUBIN.csv').values[:, [0, 2, 3]]
 
 print('Load bp_mean')
-MeanBP = pd.read_csv('/RL-safety-models/data_sofa/BP_MEAN.csv').values[:, [0, 2, 3]]
+MeanBP = pd.read_csv('/RL_safety_models/data_sofa/BP_MEAN.csv').values[:, [0, 2, 3]]
 
 print('Load Creatinine')
-Creatinine = pd.read_csv('/RL-safety-models/data_sofa/CREATININE.csv').values[:, [0, 2, 3]]
+Creatinine = pd.read_csv('/RL_safety_models/data_sofa/CREATININE.csv').values[:, [0, 2, 3]]
 
 print('Load GCS')
-GCS = pd.read_csv('/RL-safety-models/data_sofa/GCS.csv').values[:, :3]
+GCS = pd.read_csv('/RL_safety_models/data_sofa/GCS.csv').values[:, :3]
 
 print('Load PaO2')
-PaO2 = pd.read_csv('/RL-safety-models/data_sofa/PAO2.csv').values[:, [0, 2, 3]]
+PaO2 = pd.read_csv('/RL_safety_models/data_sofa/PAO2.csv').values[:, [0, 2, 3]]
 
 print('Load FiO2')
-FiO2 = pd.read_csv('/RL-safety-models/data_sofa/FiO2.csv').values[:, :3]
+FiO2 = pd.read_csv('/RL_safety_models/data_sofa/FiO2.csv').values[:, :3]
 
 print('Load Platelet')
-Platelet = pd.read_csv('/RL-safety-models/data_sofa/PLATELET.csv', low_memory=False).values[:, [0, 2, 3]]
+Platelet = pd.read_csv('/RL_safety_models/data_sofa/PLATELET.csv', low_memory=False).values[:, [0, 2, 3]]
 
 dfs = [Total_bili, MeanBP, Creatinine,GCS, PaO2, FiO2, Platelet]
 
@@ -146,4 +146,4 @@ reformatsah = np.column_stack((reformatsah, PaO2_FiO2))
 
 reformatsah = pd.DataFrame(reformatsah, columns=['timestep','icustayid', 'charttime', 'Total_bili', 'MeanBP', 'Creatinine','GCS', 'PaO2', 'FiO2', 'Platelet','PaO2_FiO2'])
 
-reformatsah.to_csv('/RL-safety-models/data_sofa/reformat.csv', index=False, na_rep='NaN')
+reformatsah.to_csv('/RL_safety_models/data_sofa/reformat.csv', index=False, na_rep='NaN')
