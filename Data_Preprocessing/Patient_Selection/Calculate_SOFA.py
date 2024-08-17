@@ -11,7 +11,7 @@ from tqdm import tqdm
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import pdist, squareform
 import datetime
-dir_path = os.path.dirname(os.path.realpath(__file__))
+from constants import SOFA_PATH
 
 print('Load reformatsah')
 reformat = pd.read_csv(SOFA_PATH + 'reformat_vaso.csv')
