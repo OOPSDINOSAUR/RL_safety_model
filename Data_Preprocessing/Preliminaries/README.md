@@ -9,5 +9,5 @@
 2. You will need to run Variable_Clean.sql clean the wrong data from the clinical data screened in the previous step and to perform unit unification.
 
 ### Step Three (Variable Integrate)
-1. Please create a structure called mimic3_sepsis_cleaned in MySQL.
-2. You will need to run Variable_Clean.sql clean the wrong data from the clinical data screened in the previous step and to perform unit unification.
+1. Please create a structure called mimic3_sepsis_final in MySQL.
+2. You will need to run Variable_Integrate.sql for the final integration of the clinical data.
