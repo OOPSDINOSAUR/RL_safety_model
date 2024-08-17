@@ -34,7 +34,9 @@ python Data_Preprocessing/Patient_Selection/Calculate_SOFA.py
 ### Step Four
 
 Screening of sepsis patients for duration of illness.
+
 You will need to run Sepsis_Time.sql.
+
 Note: Please import sofa.csv into MySQL's mimic3_sepsis_cleaned before running Sepsis_Time.sql.
 
 
