@@ -10,95 +10,95 @@ from tqdm import tqdm
 
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import pdist, squareform
-dir_path = os.path.dirname(os.path.realpath(__file__))
+from constants import SEPSIS_PATH, DATA_FOLDER_PATH
 
 print('Load demog')
 demog = pd.read_csv(
-    f'{dir_path}/data_sepsis/DEMOG.csv')  # read as DataFrame
+    f'{SEPSIS_PATH}/DEMOG.csv')  # read as DataFrame
 
 print('Load ce010')
 ce010 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_0_10000.csv').values
+    f'{SEPSIS_PATH}/CE_0_10000.csv').values
 
 print('Load ce1020')
 ce1020 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_10000_20000.csv').values
+    f'{SEPSIS_PATH}/CE_10000_20000.csv').values
 
 print('Load ce2030')
 ce2030 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_20000_30000.csv').values
+    f'{SEPSIS_PATH}/CE_20000_30000.csv').values
 
 print('Load ce3040')
 ce3040 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_30000_40000.csv').values
+    f'{SEPSIS_PATH}/CE_30000_40000.csv').values
 
 print('Load ce4050')
 ce4050 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_40000_50000.csv').values
+    f'{SEPSIS_PATH}/CE_40000_50000.csv').values
 
 print('Load ce5060')
 ce5060 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_50000_60000.csv').values
+    f'{SEPSIS_PATH}/CE_50000_60000.csv').values
 
 print('Load ce6070')
 ce6070 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_60000_70000.csv').values
+    f'{SEPSIS_PATH}/CE_60000_70000.csv').values
 
 print('Load ce7080')
 ce7080 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_70000_80000.csv').values
+    f'{SEPSIS_PATH}/CE_70000_80000.csv').values
 
 print('Load ce8090')
 ce8090 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_80000_90000.csv').values
+    f'{SEPSIS_PATH}/CE_80000_90000.csv').values
 
 print('Load ce90100')
 ce90100 = pd.read_csv(
-    f'{dir_path}/data_sepsis/CE_90000_100000.csv').values
+    f'{SEPSIS_PATH}/CE_90000_100000.csv').values
 
 print('Load labU')
 labU = pd.read_csv(
-    f'{dir_path}/data_sepsis/LABS.csv').values
+    f'{SEPSIS_PATH}/LABS.csv').values
 
 print('Load MV')
 MV = pd.read_csv(
-    f'{dir_path}/data_sepsis/MECHVENT.csv').values
+    f'{SEPSIS_PATH}/MECHVENT.csv').values
 
 print('Load inputpreadm')
 inputpreadm = pd.read_csv(
-    f'{dir_path}/data_sepsis/PREADM_FLUID.csv').values
+    f'{SEPSIS_PATH}/PREADM_FLUID.csv').values
 
 print('Load inputpreadm')
 inputpreadm = pd.read_csv(
-    f'{dir_path}/data_sepsis/PREADM_FLUID.csv').values
+    f'{SEPSIS_PATH}/PREADM_FLUID.csv').values
 
 print('Load inputMV')
 inputMV = pd.read_csv(
-    f'{dir_path}/data_sepsis/FLUID_MV.csv').values
+    f'{SEPSIS_PATH}/FLUID_MV.csv').values
 
 print('Load inputCV')
 inputCV = pd.read_csv(
-    f'{dir_path}/data_sepsis/FLUID_CV.csv').values
+    f'{SEPSIS_PATH}/FLUID_CV.csv').values
 
 print('Load vasoMV')
 vasoMV = pd.read_csv(
-    f'{dir_path}/data_sepsis/VASO_MV.csv').values
+    f'{SEPSIS_PATH}/VASO_MV.csv').values
 
 print('Load vasoCV')
 vasoCV = pd.read_csv(
-    f'{dir_path}/data_sepsis/VASO_CV.csv').values
+    f'{SEPSIS_PATH}/VASO_CV.csv').values
 
 print('Load UOpreadm')
 UOpreadm = pd.read_csv(
-    f'{dir_path}/data_sepsis/PREADM_UO.csv').values
+    f'{SEPSIS_PATH}/PREADM_UO.csv').values
 
 print('Load UO')
 UO = pd.read_csv(
-    f'{dir_path}/data_sepsis/UO.csv').values
+    f'{SEPSIS_PATH}/UO.csv').values
 
 print('Load sofa_period')
 sofa_period = pd.read_csv(
-    f'{dir_path}/data_sepsis/SOFA_PERIOD_ADULT.csv').values
+    f'{SEPSIS_PATH}/SOFA_PERIOD_ADULT.csv').values
 
 
 # To ignore 'Runtime Warning: Invalid value encountered in greater' caused by NaN
@@ -1102,6 +1102,6 @@ reformat4t.reset_index(inplace=True, drop=True)
 dataheaders5 = ['bloc','icustayid','charttime','gender','age','elixhauser','re_admission', 'died_in_hosp', 'died_within_48h_of_out_time','mortality_90d','delay_end_of_record_and_discharge_or_death',    'Weight_kg','GCS','HR','SysBP','MeanBP','DiaBP','RR','SpO2','Temp_C','FiO2_1','Potassium','Sodium','Chloride','Glucose',    'BUN','Creatinine','Magnesium','Calcium','Ionised_Ca','CO2_mEqL','SGOT','SGPT','Total_bili','Albumin','Hb','WBC_count','Platelets_count','PTT','PT','INR',    'Arterial_pH','paO2','paCO2','Arterial_BE','HCO3','Arterial_lactate','mechvent','Shock_Index','PaO2_FiO2',    'median_dose_vaso','max_dose_vaso','input_total','input_4hourly','output_total','output_4hourly','cumulated_balance','SOFA','SIRS']
 ii=np.where(np.isin(reformat4t.columns,dataheaders5))[0]
 MIMICtable = reformat4t.iloc[:,ii]
-MIMICtable.to_csv(f'{dir_path}/data/mimictable.csv',index=False,na_rep='NaN')
-with open(f'{dir_path}/data/step_4_start_choose.pkl', 'wb') as file:
+MIMICtable.to_csv(f'{DATA_FOLDER_PATH}/mimictable.csv',index=False,na_rep='NaN')
+with open(f'{DATA_FOLDER_PATH}/step_4_start_choose.pkl', 'wb') as file:
     pickle.dump(MIMICtable, file)

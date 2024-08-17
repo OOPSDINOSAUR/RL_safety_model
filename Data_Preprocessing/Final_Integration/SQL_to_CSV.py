@@ -11,6 +11,7 @@ from tqdm import tqdm
 from scipy.interpolate import interp1d
 from scipy.spatial.distance import pdist, squareform
 import datetime
+from constants import SEPSIS_PATH
 
 # Extract all tables of mysql database
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -31,4 +32,4 @@ for i in TABLES:
     result = mycursor.fetchall()
     columns = [i[0] for i in mycursor.description]
     df = pd.DataFrame(result, columns=columns)
-    df.to_csv(f'{dir_path}/data_sepsis/' + i + '.csv', index=False)
+    df.to_csv(f'{SEPSIS_PATH}/' + i + '.csv', index=False)

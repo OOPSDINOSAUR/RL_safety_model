@@ -14,25 +14,25 @@ import datetime
 from constants import SOFA_PATH
 
 print('Load Total_bili')
-Total_bili = pd.read_csv(SOFA_PATH + 'BILIRUBIN.csv').values[:, [0, 2, 3]]
+Total_bili = pd.read_csv(f'{SOFA_PATH}/BILIRUBIN.csv').values[:, [0, 2, 3]]
 
 print('Load bp_mean')
-MeanBP = pd.read_csv(SOFA_PATH + 'BP_MEAN.csv').values[:, [0, 2, 3]]
+MeanBP = pd.read_csv(f'{SOFA_PATH}/BP_MEAN.csv').values[:, [0, 2, 3]]
 
 print('Load Creatinine')
-Creatinine = pd.read_csv(SOFA_PATH + 'CREATININE.csv').values[:, [0, 2, 3]]
+Creatinine = pd.read_csv(f'{SOFA_PATH}/CREATININE.csv').values[:, [0, 2, 3]]
 
 print('Load GCS')
-GCS = pd.read_csv(SOFA_PATH + 'GCS.csv').values[:, :3]
+GCS = pd.read_csv(f'{SOFA_PATH}/GCS.csv').values[:, :3]
 
 print('Load PaO2')
-PaO2 = pd.read_csv(SOFA_PATH + 'PAO2.csv').values[:, [0, 2, 3]]
+PaO2 = pd.read_csv(f'{SOFA_PATH}/PAO2.csv').values[:, [0, 2, 3]]
 
 print('Load FiO2')
-FiO2 = pd.read_csv(SOFA_PATH + 'FiO2.csv').values[:, :3]
+FiO2 = pd.read_csv(f'{SOFA_PATH}/FiO2.csv').values[:, :3]
 
 print('Load Platelet')
-Platelet = pd.read_csv(SOFA_PATH + 'PLATELET.csv', low_memory=False).values[:, [0, 2, 3]]
+Platelet = pd.read_csv(f'{SOFA_PATH}/PLATELET.csv', low_memory=False).values[:, [0, 2, 3]]
 
 dfs = [Total_bili, MeanBP, Creatinine,GCS, PaO2, FiO2, Platelet]
 
@@ -148,4 +148,4 @@ reformatsah = np.column_stack((reformatsah, PaO2_FiO2))
 
 reformatsah = pd.DataFrame(reformatsah, columns=['timestep','icustayid', 'charttime', 'Total_bili', 'MeanBP', 'Creatinine','GCS', 'PaO2', 'FiO2', 'Platelet','PaO2_FiO2'])
 
-reformatsah.to_csv(SOFA_PATH + 'reformat.csv', index=False, na_rep='NaN')
+reformatsah.to_csv(f'{SOFA_PATH}/reformat.csv', index=False, na_rep='NaN')

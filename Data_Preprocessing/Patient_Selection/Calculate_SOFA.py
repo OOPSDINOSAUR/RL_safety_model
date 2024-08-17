@@ -14,7 +14,7 @@ import datetime
 from constants import SOFA_PATH
 
 print('Load reformatsah')
-reformat = pd.read_csv(SOFA_PATH + 'reformat_vaso.csv')
+reformat = pd.read_csv(f'{SOFA_PATH}/reformat_vaso.csv')
 reformat['max_dose_vaso'] = reformat['max_dose_vaso'].fillna(0)
 reformat['output_4hourly'] = reformat['output_4hourly'].replace(0, np.nan)
 s = reformat.loc[:, ['PaO2_FiO2', 'Platelet', 'Total_bili', 'MeanBP', 'max_dose_vaso', 'GCS', 'Creatinine',
@@ -60,7 +60,7 @@ for i in range(0, reformat.shape[0]):
 
 sofa = reformat[:, [0, 1, 2, -1]]
 sofa = pd.DataFrame(sofa, columns=['timestep','icustayid', 'charttime', 'sofa'])
-sofa.to_csv(SOFA_PATH + 'sofa.csv', index=False, na_rep='NaN')
+sofa.to_csv(f'{SOFA_PATH}/sofa.csv', index=False, na_rep='NaN')
 selected_rows = sofa[sofa.iloc[:, -1] > 2]
-selected_rows.to_csv(SOFA_PATH + 'sofa>2.csv', index=False, na_rep='NaN')
+selected_rows.to_csv(f'{SOFA_PATH}/sofa>2.csv', index=False, na_rep='NaN')
 
