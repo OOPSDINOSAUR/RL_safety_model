@@ -1,4 +1,4 @@
-# 分割训练和测试数据
+# Splitting training and test data
 # importing
 import sys
 import os
@@ -21,11 +21,11 @@ rewards = np.load(f"{DATA_FOLDER_PATH}/rewards/rewards_without_intermediate.npy"
 terminals = np.load(f"{DATA_FOLDER_PATH}/done_flags/done_flags.npy")
 
 data = MDPDataset(states, actions, rewards, terminals)
-# 如果尚不存在，代码会创建一个名为indices的文件夹，用于存储索引数据
+# If it doesn't already exist, the code creates a folder called indices to store the index data
 if (not os.path.isdir(f"{DATA_FOLDER_PATH}/indices")):
     os.mkdir(f"{DATA_FOLDER_PATH}/indices")
 
-# 在每次迭代中，数据的索引会被随机划分成训练集和测试集，并分别保存到不同的文件中
+# In each iteration, the indexes of the data are randomly divided into a training set and a test set and saved in separate files
 # Spliting the Training and Testing Data 
 def split_data(index):
     indices = np.arange(len(data.episodes))
@@ -36,6 +36,6 @@ def split_data(index):
     np.save(f"{DATA_FOLDER_PATH}/indices/train_indices_{index}.npy", train_data_indices)
     np.save(f"{DATA_FOLDER_PATH}/indices/test_indices_{index}.npy", test_data_indices)
 
-# 对数据集进行5次分割，每次分割生成不同的训练数据和测试数据
+# The dataset is segmented five times, with each segmentation generating different training and test data
 for i in range(5):
     split_data(i)

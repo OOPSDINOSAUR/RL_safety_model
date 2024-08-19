@@ -1,16 +1,18 @@
 """
 icustay_id（Intensive Care Unit Stay ID）：
 
-'icustay_id'是用于唯一标识一个患者在重症监护病房（ICU）内的住院次数的标识符。
-在一个医院或医疗数据集中，一个患者可能会多次被送入ICU，每次进入ICU都会被分配一个唯一的'icustay_id'。
-'icustay_id'可以用于追踪特定患者在ICU内的医疗记录、治疗方案、监测数据等。
-hadm_id（Hospital Admission ID）：
+‘icustay_id’ is an identifier used to uniquely identify the number of times a patient has been admitted to an intensive care unit (ICU).
+In a hospital or healthcare dataset, a patient may be admitted to the ICU multiple times, and each time he or she is admitted to the ICU, he or she is assigned a unique ‘icustay_id’.
+The ‘icustay_id’ can be used to track a specific patient's medical records, treatment regimen, monitoring data, etc. while in the ICU.
+hadm_id (Hospital Admission ID):
 
-'hadm_id'是用于唯一标识一个患者在医院内的住院次数的标识符。
-在医院中，一个患者可能会多次被录取入院，每次录取都会被分配一个唯一的'hadm_id'。
-'hadm_id'可以用于跟踪患者的不同住院次数，了解他们接受的治疗、手术、医疗历史等信息。
+‘hadm_id’ is an identifier used to uniquely identify the number of times a patient has been admitted within a hospital.
+A patient may be admitted to the hospital multiple times and each admission is assigned a unique ‘hadm_id’.
+‘hadm_id’ can be used to track the number of different hospital admissions a patient has had, to understand information about the treatments, surgeries, medical history, etc. that they have received.
+
+Translated with DeepL.com (free version)
 """
-# 构建用于强化学习的状态-动作-奖励序列，以及一些与序列有关的信息，如完成标志（done_flags）
+# Constructing state-action-reward sequences for reinforcement learning, and some sequence-related information such as done_flags
 import numpy as np
 import pandas as pd
 from copy import deepcopy
@@ -19,7 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from functools import partial
 from tqdm import tqdm
 
-# Apache II，一种用于评估患者重症程度的评分系统
+# Apache II, a scoring system for assessing a patient's level of critical illness
 APACHE_RANGES = {
     "Temp_C": [(41, 4), (39, 3), (38.5, 1), (36, 0), (34, 1), (32, 2), (30, 3), (0, 4)],
     "MeanBP": [(160, 4), (130, 3), (110, 2), (70, 0), (50, 2), (0, 4)],
@@ -35,15 +37,15 @@ MAX_APACHE_SCORE = sum([l[-1][1] for l in APACHE_RANGES.values()]) + 12 # +12 is
 INTERMEDIATE_REWARD_SCALING = 1
 
 """
-如果当前时间步所在的icustay_id与下一个时间步的icustay_id不同，即当前时间步为一个icustay（住院期间）的最后一个时间步，那么：
+If the icustay_id where the current time step is located is different from the icustay_id of the next time step, i.e., the current time step is the last time step of an icustay (hospitalisation period), then:
 
-如果当前时间步对应的患者的hospmort90day（是否在住院后90天内死亡）值为0（即未死亡），则返回奖励值1。
-如果当前时间步对应的患者的hospmort90day值为非零值（死亡），则返回奖励值-1。
-否则，如果当前时间步与下一个时间步的icustay_id相同，即当前时间步不是icustay的最后一个时间步，那么：
+If the current time step corresponds to a patient whose hospmort90day (whether he/she died within 90 days of hospitalisation) value is 0 (i.e. did not die), the reward value 1 is returned.
+If the patient's hospmort90day value corresponding to the current time step is a non-zero value (died), then the reward value -1 is returned.
+Otherwise, if the current time step has the same icustay_id as the next time step, i.e., the current time step is not the last time step of the icustay:
 
-计算奖励值，使用以下公式：
-奖励值 = INTERMEDIATE_REWARD_SCALING * (-(当前时间步的apache2分数 - 上一个时间步的apache2分数)) / MAX_APACHE_SCORE
-其中，INTERMEDIATE_REWARD_SCALING为中间奖励缩放系数，apache2是一种患者重症评分，MAX_APACHE_SCORE为最大的Apache II评分。
+To calculate the reward value, use the following formula:
+Reward value = INTERMEDIATE_REWARD_SCALING * (-(apache2 score of the current time step - apache2 score of the previous time step)) / MAX_APACHE_SCORE
+where INTERMEDIATE_REWARD_SCALING is the intermediate reward scaling factor, apache2 is a patient reward score, and MAX_APACHE_SCORE is the maximum Apache II score.
 """
 #compute the reward
 def compute_reward(row):
@@ -53,7 +55,7 @@ def compute_reward(row):
   else:
     return INTERMEDIATE_REWARD_SCALING * (-(row['apache2'] - row['apache2_shifted_up']))/MAX_APACHE_SCORE
 
-# 根据Apache II评分范围计算患者的Apache II评分。根据不同的生理指标值，该函数会累加各项得分
+# Calculates the patient's Apache II score based on the Apache II score range. Depending on the value of the different physiological indicators, the function accumulates the scores
 def compute_apache2(row):
   score = 0
 

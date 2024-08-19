@@ -6,7 +6,7 @@ import pickle
 import sys
 import os
 import os
-os.environ['PYTHONPATH'] = '/home/turui_13881735835/Project_python/new_deepsepsis'
+os.environ['PYTHONPATH'] = ''
 from d3rlpy.dataset import MDPDataset
 from d3rlpy.ope import DiscreteFQE
 from d3rlpy.algos import DiscreteCQL, DoubleDQN

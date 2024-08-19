@@ -13,10 +13,12 @@ from fancyimpute import KNN
 import math
 
 """
-该函数实现了"sample-and-hold"缺失值填充方法，适用于时间变化的临床试验数据，例如MIMIC-III数据集。
-接受输入参数包括原始的数据框input、持续时间参数hold_period（用于指定每个变量的保持时间），以及可选的adjust参数。
-函数遍历数据框的每一行，对缺失值进行填充。如果当前时间步对应的icustay_id与下一个时间步的不同，则将最后一个时间步的观测值保持到当前时间步。
-通过遍历不同的列和行，逐步填充缺失值，以生成一个填充后的新数据框。
+
+This function implements the ‘sample-and-hold’ method of filling in missing values for time-varying clinical trial data, such as the MIMIC-III dataset.
+Accepted input parameters include the original data frame input, the duration parameter hold_period (which specifies how long to hold each variable), and the optional adjust parameter.
+The function iterates through each row of the data frame, filling in missing values. If the icustay_id corresponding to the current time step is different from that of the next time step, the observations from the last time step are held to the current time step.
+The missing values are progressively populated by traversing the different columns and rows to produce a new populated data frame.
+
 """
 def sample_and_hold(input: pd.DataFrame, hold_period: np.array, adjust = 0):
   '''
@@ -73,11 +75,13 @@ def sample_and_hold(input: pd.DataFrame, hold_period: np.array, adjust = 0):
   return temp
 
 """
-该函数用于将输入数据框进行预处理和缺失值填充，结合了"sample-and-hold"和KNN填充方法。
-接受输入参数包括df（初始数据框）、N（KNN块大小）、k_param（KNN的参数）、以及可选的weights、col_names_knn、col_names_sah参数。
-首先根据缺失值的程度筛选列，将缺失率过高的列从数据框中移除。
-然后将数据分为两部分：对于缺失值较高的部分使用"sample-and-hold"方法进行填充，对于缺失值较低的部分使用KNN方法进行填充。
-最终将两部分填充后的数据框合并，生成一个经过预处理和缺失值填充的数据框。
+
+This function is used to preprocess the input data frame and fill it with missing values, combining the ‘sample-and-hold’ and KNN filling methods.
+It accepts input parameters including df (initial data frame), N (KNN block size), k_param (KNN parameter), and optional weights, col_names_knn, col_names_sah parameters.
+Columns are first filtered according to the degree of missing values, and those with too high missing rates are removed from the data frame.
+Then the data is divided into two parts: the part with high missing values is filled using the ‘sample-and-hold’ method, and the part with low missing values is filled using the KNN method.
+Finally, the two filled data frames are merged to produce a preprocessed and missing value filled data frame.
+
 """
 def preprocess_imputation(df: pd.DataFrame,  N: int, k_param: int, weights = None,  col_names_knn = None, col_names_sah = None):
   """
@@ -86,17 +90,17 @@ def preprocess_imputation(df: pd.DataFrame,  N: int, k_param: int, weights = Non
     k - KNN parameter 
     df - initial dataframe in correct column name representation
   """
-  miss_level = df.drop(labels=['subject_id', 'icustay_id', 'hadm_id','start_time'], axis = 1).isnull().sum() / df.shape[0]
-  column_names = df.drop(labels = ['subject_id', 'icustay_id', 'hadm_id','start_time'], axis = 1).columns[miss_level >= 0.95]
-  df_drop = df.drop(labels = ['subject_id', 'icustay_id', 'hadm_id','start_time'], axis = 1).loc[:, miss_level < 0.95] # with subject_id, icustay_id, hadm_id, start_time
-  df_drop = pd.concat([df_drop, df[['subject_id', 'icustay_id', 'hadm_id','start_time']]], axis=1)
+  miss_level = df.drop(labels=[ 'icustay_id', 'start_time'], axis = 1).isnull().sum() / df.shape[0]
+  column_names = df.drop(labels = [ 'icustay_id', 'start_time'], axis = 1).columns[miss_level >= 0.95]
+  df_drop = df.drop(labels = [ 'icustay_id', 'start_time'], axis = 1).loc[:, miss_level < 0.95] # with subject_id, icustay_id, hadm_id, start_time
+  df_drop = pd.concat([df_drop, df[[ 'icustay_id', 'start_time']]], axis=1)
   n_count = sum(miss_level > 0.95)
   print("Removed", n_count, end= " ")
   print("columns with variable names:", *column_names, sep = "\n")
   
-  # separate data for SAH and KNN imputation, keeping 'subject_id', 'icustay_id', 'hadm_id','start_time' columns intact:
+  # separate data for SAH and KNN imputation, keeping  'icustay_id', 'start_time' columns intact:
   miss_level = df_drop.isnull().sum() / df_drop.shape[0]
-  id_part = df_drop[['subject_id', 'icustay_id', 'hadm_id','start_time']]
+  id_part = df_drop[[ 'icustay_id', 'start_time']]
   df_sah = df_drop.loc[:, (miss_level >= 0.3)]
   df_sah = pd.concat([id_part, df_sah], axis = 1)
 
@@ -111,9 +115,9 @@ def preprocess_imputation(df: pd.DataFrame,  N: int, k_param: int, weights = Non
   
   # for small level of missingness: knn
   c_s = N*1000
-  knn_removed_cols = df_knn[['subject_id', 'icustay_id', 'hadm_id','start_time','gender', 'dischtime']]
-  df_knn_dropped_columns = df_knn.drop(labels=['subject_id', 'icustay_id', 'hadm_id','start_time','gender', 'dischtime'], axis = 1).columns
-  temp = df_knn.drop(labels=['subject_id', 'icustay_id', 'hadm_id','start_time','gender', 'dischtime'], axis = 1).to_numpy()
+  knn_removed_cols = df_knn[[ 'icustay_id', 'start_time','gender', 'dischtime']]
+  df_knn_dropped_columns = df_knn.drop(labels=[ 'icustay_id', 'start_time','gender', 'dischtime'], axis = 1).columns
+  temp = df_knn.drop(labels=[ 'icustay_id', 'start_time','gender', 'dischtime'], axis = 1).to_numpy()
   for i in range(0, temp.shape[0], (N*1000)):
     if (i + (N*1000) > temp.shape[0]-1):
       temp[i:temp.shape[0]-1, :] = KNN(k = k_param).fit_transform(temp[i:temp.shape[0]-1, :])
@@ -121,5 +125,5 @@ def preprocess_imputation(df: pd.DataFrame,  N: int, k_param: int, weights = Non
       temp[i:i+c_s, :] = KNN(k = k_param).fit_transform(temp[i:i+c_s, :]) # inputes via kNN
   df_knn_imp = pd.DataFrame(data=temp, columns = df_knn_dropped_columns)
   df_knn = knn_removed_cols.join(df_knn_imp)
-  final = df_sah.set_index(['subject_id','icustay_id', 'hadm_id', 'start_time']).join(other=df_knn.set_index(['subject_id','icustay_id', 'hadm_id', 'start_time']))
+  final = df_sah.set_index(['icustay_id',  'start_time']).join(other=df_knn.set_index(['icustay_id',  'start_time']))
   return final.reset_index(drop=False)

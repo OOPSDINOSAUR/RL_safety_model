@@ -1,4 +1,3 @@
-# 生成异常患者的分布外（OOD）数据集，其中这些患者的某个特征位于整个数据集的前1%或后1%之间
 # Generate out-of-distribution dataset corresponding to patients that have one feature in top or bottom 1%
 # of entire dataset
 # importing
