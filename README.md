@@ -13,3 +13,23 @@ In the majority of medical-assisted diagnostic models that have been developed i
 cd RL_safety_model
 ```
 2. Create and activate virtual environment 
+Linux:
+```sh
+python -m venv env
+source env/bin/activate
+```
+Windows (run this from the command prompt NOT powershell):
+```
+python -m venv env
+.\env\Scripts\activate.bat
+```
+
+3. install the required libraries
+```
+pip install -r requirements.txt 
+```
+4. install the root package (Run this from the ROOT directory of the repository, i.e. the directory which contains "data_preprocessing", "evaluation", etc.)
+```
+pip install -e .
+```
+5. install pytorch with CUDA capabilities
