@@ -1,0 +1,116 @@
+import numpy as np
+import itertools
+from collections import Counter
+
+from d3rlpy.ope import DiscreteFQE
+from d3rlpy.algos import DiscreteCQL, DoubleDQN
+from utils.load_utils import load_data
+from constants import FINAL_POLICIES_PATH,HYPERPARAMETER_SEARCH_PATH
+ACTION_DICT                 = {
+                                'input_4hourly': [0,50, 180, 530, 1000000000],
+                                'max_dose_vaso': [0,0.08, 0.22, 0.45, 1000000000]
+                                }
+
+def get_reverse_action_dict():
+    '''Get dictionary that takes action.py index and returns indices of bins for 3 settings'''
+    indices_lists = [[i for i in range(len(ACTION_DICT[action]))] for action in ACTION_DICT]
+    possibilities = list(itertools.product(*indices_lists))
+    possibility_dict = {}
+
+    for i, possibility in enumerate(possibilities):
+        possibility_dict[i] = possibility
+	
+    return possibility_dict
+
+class Estimator():
+    def __init__(self, label, data):
+        self.label = label
+        self.data = {"train" : data[0], "test" : data[1]}
+        assert(len(self.data["train"].episodes) > len(self.data["test"].episodes))
+
+class ModelEstimator(Estimator):
+    def __init__(self, label, model_class, data, policy_path):
+        super().__init__(label, data)
+        self.policy_path = policy_path
+        self.model_class = model_class
+        self.policy = self.load_policy(policy_path)
+        # print("MODEL ESTIMATOR")
+        # print(self.data['test'].observations)
+
+    def load_policy(self, policy_path):
+        model = self.model_class()
+        model.build_with_dataset(self.data["train"])
+        model.load_model(policy_path)
+        return model
+    
+    def load_fqe_policy(self, fqe_policy_path):
+        model = DiscreteFQE(algo=self.policy)
+        model.build_with_dataset(self.data["train"])
+        model.load_model(fqe_policy_path)
+        return model
+
+
+    def get_action_count(self):
+        return Counter(self.data["test"].actions)
+    
+    def get_actions_within_one_bin(self):
+        actions = self.policy.predict(self.data["test"].observations)
+        reverse_action_dict = get_reverse_action_dict()
+        model_setting = {
+            "input_4hourly": np.array([reverse_action_dict[action][0] for action in actions]),
+            "max_dose_vaso": np.array([reverse_action_dict[action][1] for action in actions]),
+        }
+
+        phys_setting = {
+            "input_4hourly": np.array([reverse_action_dict[action][0] for action in self.data["test"].actions]),
+            "max_dose_vaso": np.array([reverse_action_dict[action][1] for action in self.data["test"].actions]),
+        }
+        num_close = {}
+        key_list = list(model_setting.keys())
+
+        for setting in key_list:
+            num_close[setting] = 0
+            for i in range(len(model_setting["input_4hourly"])):
+                model_ind = model_setting[setting][i]
+                phys_ind = phys_setting[setting][i]
+                if model_ind <= phys_ind + 1 and model_ind >= phys_ind - 1:
+                    num_close[setting] += 1
+
+            num_close[setting] /= len(phys_setting[setting])
+        return num_close
+
+class PhysicianEstimator(Estimator):
+    def __init__(self, data):
+        super().__init__("Physician", data)
+
+
+    def get_init_value_estimation(self, data):
+        values = []
+        for episode in data.episodes:
+            if episode.rewards[-1] == 1:
+                values.append(0.99 ** (len(episode)))
+            elif episode.rewards[-1] == -1:
+                values.append(-(0.99 ** (len(episode))))
+
+        return np.array(values)
+
+class MaxEstimator(Estimator):
+    def __init__(self, data):
+        super().__init__("Max", data)
+
+    def get_init_value_estimation(self, data):
+        values = []
+        for episode in data.episodes:
+            values.append(0.99 ** (len(episode)))
+
+        return np.array(values)
+
+
+def get_final_estimator(gamma,alpha,learning_rate,model_class, states, rewards, index_of_split):
+    model_num = 500000
+    train_data, test_data = load_data(states, rewards, index_of_split=index_of_split)
+    model = model_class()
+    path = HYPERPARAMETER_SEARCH_PATH + f"/lr={learning_rate},gamma={gamma},alpha={alpha}"
+    # 每个超参数的取值范围
+    model_path = f"model_{model_num}.pt"
+    return ModelEstimator("", model_class, [train_data, test_data], path)

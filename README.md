@@ -33,3 +33,61 @@ pip install -r requirements.txt
 pip install -e .
 ```
 5. install pytorch with CUDA capabilities
+
+## Processing Data
+1. Preliminaries
+2. Patient_Selection
+3. Final_Integration
+4. Compute Trajectories
+5. Modify elements
+6. Split the data and create OOD
+
+To run the data preprocessing: 
+1. Obtain the raw data following the instructions in data_preprocessing/data_extraction folder. You will need to insert your path in the scripts.
+2. within the parent directory, run data preprocessing 
+```
+python3 Data_Preprocessing/run.py
+```
+Note: A more detailed description for each section of data preprocessing is provided in the data preprocessing folder. 
+
+## Training policies
+1. To find the optimal hyperparameters, grid search can be conducted using:  
+```
+python3 Training/find_cql.py 
+python3 Training/find_dqn.py
+python3 Training/choose_parameter.py
+```
+2. Train the policy. Edit the values for the other hyperparameters such as LEARNING_RATE, N_EPOCHS, etc. within the script. The given values are the optimal values that was found in this given problem. The path to the policy weights for each epoch will be output in the console. In the same folder as the policy weights you can find the csv files for all the metrics for the policy at each epoch. 
+```
+python3 Training/train_eval_loop.py
+python3 Training/train_eval_loop_n0.py
+```
+Note: Apply two GPUs separately.
+
+Running the above scripts will generate ouputs in `d3rlpy_logs` folder. 
+
+3. Then run `python3 Training/get_all_final_policies.py` to get all policies in the correct format for evaluation (modifying `run_num` and `model_num` and `fqe_model_num` to match the parameters you set in step 3 in `Training/train_eval_loop.py`).
+
+## Evaluation
+
+Evaluation directory contains all code necessary to generate graphs and results from DeepVent paper.
+
+1. Basic evaluation
+
+Requires having 5 runs of CQL without intermediate reward, CQL with intermediate reward, DDQN without intermediate reward and DDQN with intermediate reward in the final policies directory defined in `constants.py`.
+
+To run evalutaion script, simply do:
+```
+cd evaluation
+python3 compare_policies.py
+python3 percent_each_setting_close_to_physician.py
+python3 action_distribution_3d_chart.py
+```
+
+2. Evaluation in OOD
+
+Requires 5 runs of CQL without intermediate rewards, CQL with intermediate rewards, DDQN without intermediate rewards, and DDQN with intermediate rewards with OOD as training data in the final policy directory defined in `constants.py`.
+```
+cd evaluation
+python3 compare_ood_id.py
+```
