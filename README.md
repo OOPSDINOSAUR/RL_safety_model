@@ -48,8 +48,8 @@ pip install -e .
 6. Split the data and create OOD
 
 To run the data preprocessing: 
-1. Obtain the raw data following the instructions in data_preprocessing/data_extraction folder. You will need to insert your path in the scripts.
-2. within the parent directory, run data preprocessing 
+1. To obtain the raw data, follow the instructions in the Preliminaries, Patient_Selection and Final_Integration folders in data_preprocessing. You will need to insert your path in the scripts.
+2. Within the parent directory, run data preprocessing 
 ```
 python3 Data_Preprocessing/run.py
 ```
