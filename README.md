@@ -48,7 +48,7 @@ pip install -e .
 6. Split the data and create OOD
 
 To run the data preprocessing: 
-1. To obtain the raw data, follow the instructions in the Preliminaries, Patient_Selection and Final_Integration folders in data_preprocessing. You will need to insert your path in the scripts.
+1. To obtain the raw data, follow the instructions in the Preliminaries, Patient_Selection and Final_Integration folders in data_preprocessing.
 2. Within the parent directory, run data preprocessing 
 ```
 python3 Data_Preprocessing/run.py
@@ -75,7 +75,7 @@ Running the above scripts will generate ouputs in `d3rlpy_logs` folder.
 
 ## Evaluation
 
-Evaluation directory contains all code necessary to generate graphs and results from DeepVent paper.
+The evaluation catalogue contains all the code needed to generate the graphs and results for this thesis.
 
 1. Basic evaluation
 
